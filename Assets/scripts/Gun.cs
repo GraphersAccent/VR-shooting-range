@@ -30,14 +30,32 @@ public class Gun : MonoBehaviour
     [Header("rigidbody")]
     [SerializeField] private float _Inpact = 10f;
     [SerializeField] private float _dammageMultiply = 1f;
+    [Header("UI")]
+    [SerializeField] private GunCanvasUpdate _GunCanvas;
 
     public Transform GetLeftLockPosition
     {
-        get { return _LeftlockPosition; }
+        get 
+        {
+            if (_GunCanvas != null)
+            {
+                UpdateUiCanvas();
+                _GunCanvas.EnebleLeftHand = true;
+            }
+            return _LeftlockPosition; 
+        }
     }
     public Transform GetRightLockPosition
     {
-        get { return _RightlockPosition; }
+        get 
+        {
+            if (_GunCanvas != null)
+            {
+                UpdateUiCanvas();
+                _GunCanvas.EnebleRightHand = true;
+            }
+            return _RightlockPosition; 
+        }
     }
 
     public void ShootCalculate(float TriggerValeu)
@@ -48,6 +66,7 @@ public class Gun : MonoBehaviour
             _CurrentAmmo--;
             _ReadyToShoot = false;
             ShootBullet();
+            UpdateUiCanvas();
         }
         else if (TriggerValeu <= 0.2f && _triggerIn)
         {
@@ -104,6 +123,15 @@ public class Gun : MonoBehaviour
         _animator.SetInteger("GunState", 0);
     }
 
+
+    private void UpdateUiCanvas()
+    {
+        if (_GunCanvas != null)
+        {
+            _GunCanvas.SetCanvasText = $"{_CurrentAmmo}/{_MaxAmmo}";
+        }
+    }
+
     internal int GetCurrentAmmo
     {
         get { return _CurrentAmmo; }
@@ -112,12 +140,14 @@ public class Gun : MonoBehaviour
     internal void EmptyMag()
     {
         _CurrentAmmo = 0;
+        UpdateUiCanvas();
     }
 
     internal void SetAmmo(int rememberedAmmo)
     {
         _CurrentAmmo = rememberedAmmo;
         Mathf.Clamp(_CurrentAmmo, 0, _MaxAmmo);
+        UpdateUiCanvas();
     }
 
     private void OnDrawGizmos()
