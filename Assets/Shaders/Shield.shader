@@ -42,31 +42,30 @@
 				{
 					fixed2 uv : TEXCOORD0;
 					fixed4 vertex : SV_POSITION;
-					fixed3 rimColor : TEXCOORD1;
+					fixed4 rimColor : TEXCOORD1;
 					fixed4 screenPos : TEXCOORD2;
 					UNITY_VERTEX_INPUT_INSTANCE_ID
 					UNITY_VERTEX_OUTPUT_STEREO
 				};
 
+				sampler2D _CameraDepthTexture, _GrabTexture, _EmissionMap;
 				fixed4 _MainTex_ST,_MainColor,_GrabTexture_ST, _GrabTexture_TexelSize, _EmissionColor;
 				fixed _Fresnel, _FresnelWidth, _Distort, _IntersectionThreshold, _ScrollSpeedU, _ScrollSpeedV;
 		
 				UNITY_DECLARE_SCREENSPACE_TEXTURE(_MainTex);
-				UNITY_DECLARE_SCREENSPACE_TEXTURE(_CameraDepthTexture);
-				UNITY_DECLARE_SCREENSPACE_TEXTURE(_GrabTexture);
-				UNITY_DECLARE_SCREENSPACE_TEXTURE(_EmissionMap);
 
 
 				v2f vert(appdata v)
 				{
 					v2f o;
 					UNITY_SETUP_INSTANCE_ID(v);
+					UNITY_TRANSFER_INSTANCE_ID(v, o);
+					UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+
 					o.vertex = UnityObjectToClipPos(v.vertex);
 					o.uv = UNITY_SAMPLE_SCREENSPACE_TEXTURE(_MainTex, v.uv);
 
-					UNITY_SETUP_INSTANCE_ID(v);
-					UNITY_TRANSFER_INSTANCE_ID(v, o);
-					UNITY_INITIALIZE_VERTEX_OUTPUT_STEREO(o);
+					
 					o.vertex = UnityObjectToClipPos(v.vertex);
 					o.uv = v.uv;
 
@@ -85,14 +84,16 @@
 
 				fixed4 frag(v2f i,fixed face : VFACE) : SV_Target
 				{
+					UNITY_SETUP_STEREO_EYE_INDEX_POST_VERTEX(i);
+
 					//intersection
-					fixed intersect = saturate((abs(LinearEyeDepth(UNITY_SAMPLE_SCREENSPACE_TEXTURE(_CameraDepthTexture,i.screenPos).r) - i.screenPos.z)) / _IntersectionThreshold);
+					fixed intersect = saturate((abs(LinearEyeDepth(tex2D(_CameraDepthTexture,i.screenPos).r) - i.screenPos.z)) / _IntersectionThreshold);
 					fixed4 albedo = UNITY_SAMPLE_SCREENSPACE_TEXTURE(_MainTex, i.uv);
 
 					fixed3 main = UNITY_SAMPLE_SCREENSPACE_TEXTURE(_MainTex, i.uv);
 					//distortion
 					i.screenPos.xy += (main.rg * 2 - 1) * _Distort * _GrabTexture_TexelSize.xy;
-					fixed3 distortColor = UNITY_SAMPLE_SCREENSPACE_TEXTURE(_GrabTexture, i.screenPos);
+					fixed3 distortColor = tex2D(_GrabTexture, i.screenPos);
 					distortColor *= _MainColor * _MainColor.a + 1;
 
 					//intersect hightlight
@@ -102,14 +103,14 @@
 
 					//lerp distort color & fresnel color
 					main = lerp(distortColor, main, i.rimColor.r);
-					main += (1 - intersect) * (face > 0 ? .03 : .3)* _MainColor* _Fresnel;
+					main += (face > 0 ? .03 : .3)* _MainColor* _Fresnel;
 
 					half4 output = half4(albedo.rgb * main.rgb, albedo.a);
 
-					half4 emission = UNITY_SAMPLE_SCREENSPACE_TEXTURE(_EmissionMap, i.uv) * _EmissionColor;
+					half4 emission = tex2D(_EmissionMap, i.uv) * _EmissionColor;
 					output.rgb += emission.rgb;
 					main.rgb += output.rgb;
-					return fixed4(main,.9);
+					return fixed4(main,.3);
 				}
 
 				struct Input 

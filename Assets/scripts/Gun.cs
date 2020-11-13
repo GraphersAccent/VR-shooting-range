@@ -58,6 +58,15 @@ public class Gun : MonoBehaviour
         }
     }
 
+    public void DisableCanvas()
+    {
+        if (_GunCanvas != null)
+        {
+            UpdateUiCanvas();
+            _GunCanvas.EnebleLeftHand = false;
+        }
+    }
+
     public void ShootCalculate(float TriggerValeu)
     {
         if (TriggerValeu >= 0.8f && _ReadyToShoot == true && !_triggerIn && _CurrentAmmo > 0)

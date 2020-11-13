@@ -12,6 +12,7 @@ public class PlayerIndexPickUp : MonoBehaviour
     [SerializeField] private SteamVR_Action_Boolean _AButton;
     [SerializeField] private PlayerIndexPickUp _otherHand;
     [Header("Activation Box")]
+    [SerializeField] private GameObject _handCollider;
     [SerializeField] private Mesh _visialMesh;
     [SerializeField] private Vector3 _Position;
     [SerializeField] private Vector3 _Size;
@@ -94,7 +95,7 @@ public class PlayerIndexPickUp : MonoBehaviour
                 _handClosed = !_handClosed;
         }
 
-        Collider[] colliders = Physics.OverlapBox(transform.position + _Position, _Size / 2, Quaternion.Euler(transform.rotation.eulerAngles + _Rotation), _Layer);
+        Collider[] colliders = Physics.OverlapBox(_handCollider.transform.position, _handCollider.transform.lossyScale / 2, _handCollider.transform.rotation, _Layer);
         for (int i = 0; i < colliders.Length; i++)
         {
             Rigidbody RB = colliders[i].attachedRigidbody;
@@ -137,11 +138,17 @@ public class PlayerIndexPickUp : MonoBehaviour
             _magazineInHand.CheckIfInsideGun();
             _magazineInHand = null;
         }
+
+
         _ObjectRigidbody = _joint.connectedBody;
         _joint.connectedBody = null;
         _ObjectInHand.transform.parent = null;
         _ObjectInHand = null;
-        _GunInHand = null;
+        if (_GunInHand != null)
+        {
+            _GunInHand.DisableCanvas();
+            _GunInHand = null;
+        }
         _handRendererObject.SetActive(true);
         if (_ObjectRigidbody != null)
         {
@@ -149,11 +156,5 @@ public class PlayerIndexPickUp : MonoBehaviour
             _ObjectRigidbody.velocity = _hand.GetVelocity();
             _ObjectRigidbody.angularVelocity = _hand.GetAngularVelocity();
         }
-    }
-
-
-    private void OnDrawGizmos()
-    {
-        Gizmos.DrawWireMesh(_visialMesh, transform.position + _Position, Quaternion.Euler( transform.rotation.eulerAngles + _Rotation), _Size);
     }
 }

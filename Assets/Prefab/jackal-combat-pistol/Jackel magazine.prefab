@@ -299,7 +299,7 @@ MonoBehaviour:
   _layer:
     serializedVersion: 2
     m_Bits: 524288
-  _ammoInMag: 16
+  _ammoInMag: 10
   _startPos: {x: 0, y: 0, z: 0}
   _startRotation: {x: 0, y: 0, z: 0}
 --- !u!1 &2956184967885880053
