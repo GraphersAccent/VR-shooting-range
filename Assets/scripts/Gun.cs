@@ -19,6 +19,7 @@ public class Gun : MonoBehaviour
     [SerializeField] private Transform _RightlockPosition;
     [Header("shooting")]
     [SerializeField] private Transform _shootpoint;
+    [SerializeField] private LayerMask _HitableLayers;
     [SerializeField] private bool _ReadyToShoot = true;
     [SerializeField] private bool _triggerIn = false;
     [Header("Animation")]
@@ -91,25 +92,29 @@ public class Gun : MonoBehaviour
     {
         RaycastHit Hit;
         Ray ray = new Ray(_shootpoint.position, _shootpoint.forward);
-        if (Physics.Raycast(ray, out Hit, 10000000f))
+        if (Physics.Raycast(ray, out Hit, 10000000f, _HitableLayers))
         {
             GameObject G;
             MeshEditor Wall = Hit.collider.GetComponent<MeshEditor>();
             if (Wall != null)
             {
                 G = Wall.RecalculateMesh(Hit.point, _shootpoint.rotation);
-
                 Rigidbody RD = G.GetComponent<Rigidbody>();
                 //Vector3 Diraction = _shootpoint.TransformDirection(Vector3.forward);
 
                 if (RD == null)
                 {
                     RD = G.AddComponent<Rigidbody>();
-                    RD.useGravity = false;
+                    RD.useGravity = true;
                 }
                 //RD.AddForceAtPosition((_Inpact * _dammageMultiply) * Diraction, Hit.point);
                 RD.AddForceAtPosition((_Inpact * _dammageMultiply) * ray.direction, Hit.point);
 
+            }
+            TargetTrigger Targit = Hit.collider.GetComponent<TargetTrigger>();
+            if (Targit != null)
+            {
+                Targit.TargitIsHit();
             }
         }
         _animator.SetInteger("GunState", 1);

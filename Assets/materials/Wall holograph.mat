@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: holograph
+  m_Name: Wall holograph
   m_Shader: {fileID: 4800000, guid: d43c7d879d83fb44cb6509c60c0ae600, type: 3}
   m_ShaderKeywords: 
   m_LightmapFlags: 4
@@ -89,5 +89,5 @@ Material:
     m_Colors:
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _EmissionColor: {r: 0.00009574142, g: 0.00009957108, b: 0.00009574142, a: 0}
-    - _MainColor: {r: 0.14117648, g: 0.35934114, b: 0.36862746, a: 0.54509807}
+    - _MainColor: {r: 0.2924528, g: 0.16449857, b: 0.11449803, a: 0.54509807}
   m_BuildTextureStacks: []

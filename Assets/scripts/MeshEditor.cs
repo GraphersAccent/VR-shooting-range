@@ -9,6 +9,7 @@ public class MeshEditor : MonoBehaviour
 	[SerializeField] private GameObject PrefabHoll;
     [SerializeField] private GameObject _other, _composite;
     [SerializeField] private GameObject _thisObject;
+	[SerializeField] private LayerMask _LayerAfterCalculation;
     void Start()
     {
         _thisObject = transform.gameObject;
@@ -33,9 +34,9 @@ public class MeshEditor : MonoBehaviour
 		_composite.AddComponent<MeshFilter>().sharedMesh = result.mesh;
 		_composite.AddComponent<MeshRenderer>().sharedMaterials = result.materials.ToArray();
 		_composite.AddComponent<BoxCollider>();
-		_composite.AddComponent<MeshEditor>().SetPrefab = PrefabHoll;
         GenerateBarycentric(ref _composite);
-
+		_composite.layer = 8;
+		_composite.transform.parent = _thisObject.transform.parent;
 		Destroy(_other);
 		Destroy(_thisObject);
 		return _composite;

@@ -11,18 +11,21 @@ public class Magazine : MonoBehaviour
     [SerializeField] private int _ammoInMag = 16;
     [SerializeField] private Vector3 _startPos;
     [SerializeField] private Vector3 _startRotation;
+    [SerializeField] private Collider _collider;
 
     private void Start()
     {
         _startPos = transform.position;
         _startRotation = transform.rotation.eulerAngles;
+        _collider = GetComponent<Collider>();
     }
+
 
     public void CheckIfInsideGun()
     {
         bool succes = false;
-        Collider Col = GetComponent<Collider>();
-        Collider[] overlapcolliders = Physics.OverlapBox(Col.bounds.center, Col.bounds.size / 2, transform.rotation, _layer);
+        
+        Collider[] overlapcolliders = Physics.OverlapBox(_collider.bounds.center, (_collider.bounds.size * 1.2f) / 2, transform.rotation, _layer);
         for (int i = 0; i < overlapcolliders.Length; i++)
         {
             if (overlapcolliders[i].gameObject == _Gun)
@@ -72,5 +75,11 @@ public class Magazine : MonoBehaviour
     public bool SetMainGun
     {
         set { _MainMag = value; }
+    }
+
+    private void OnDrawGizmos()
+    {
+        Gizmos.color = Color.black;
+        Gizmos.DrawWireCube(_collider.bounds.center, _collider.bounds.size * 1.2f);
     }
 }
