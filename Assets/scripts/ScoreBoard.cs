@@ -97,15 +97,17 @@ public class ScoreBoard : MonoBehaviour
 
         string NewText = "";
         int Rank = 1;
+        TimeSpan time;
         foreach (float item in temporal)
         {
+            time = TimeSpan.FromSeconds(item);
             if (item == score)
             {
-                NewText += $"<color=red>{Rank}. {item}</color>\n";
+                NewText += $"<color=red>{Rank}. {time.ToString(@"mm\:ss\:fff")}</color>\n";
             }
             else
             {
-                NewText += $"{Rank}. {item}\n";
+                NewText += $"{Rank}. {time.ToString(@"mm\:ss\:fff")}\n";
             }
             Rank++;
         }

@@ -94,6 +94,7 @@ GameObject:
   - component: {fileID: 3065922668893516063}
   - component: {fileID: 6138778846446945394}
   - component: {fileID: 6388154706904689421}
+  - component: {fileID: 965536723}
   m_Layer: 8
   m_Name: madsonD9 Mag
   m_TagString: Untagged
@@ -194,3 +195,25 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
+--- !u!114 &965536723
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 9049794062876262021}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: c4a81b34a660b954c9b81e34e9c894dd, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  _MainMag: 1
+  _GunMag: {fileID: 0}
+  _Gun: {fileID: 0}
+  _layer:
+    serializedVersion: 2
+    m_Bits: 524288
+  _ammoInMag: 15
+  _startPos: {x: 0, y: 0, z: 0}
+  _startRotation: {x: 0, y: 0, z: 0}
+  _collider: {fileID: 6138778846446945394}
