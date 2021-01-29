@@ -49,21 +49,30 @@ public class GunMagazine : MonoBehaviour
     }
 
 
+    bool HasMag = true;
     public void EjectEmptyMag()
     {
-        GameObject G = Instantiate(_MagPrefab, _magEjectPoint.position, _magEjectPoint.rotation);
-        G.GetComponent<Magazine>().setAmmoInMag = _rememberedAmmo;
-        G.GetComponent<Magazine>().SetMainGun = false;
-        G.GetComponent<Magazine>().SetCommenData(this, this.gameObject);
-        _gunscript.EmptyMag();
-        _state = 2;
-        _animator.SetInteger("MagIn", _state);
+        if (HasMag)
+        {
+            HasMag = false;
+            GameObject G = Instantiate(_MagPrefab, _magEjectPoint.position, _magEjectPoint.rotation);
+            G.GetComponent<Magazine>().setAmmoInMag = _rememberedAmmo;
+            G.GetComponent<Magazine>().SetMainGun = false;
+            G.GetComponent<Magazine>().SetCommenData(this, this.gameObject);
+            _gunscript.EmptyMag();
+            _state = 2;
+            _animator.SetInteger("MagIn", _state);
+        }
     }
 
     public void NewMagIn()
     {
-        _state = 0;
-        _gunscript.SetAmmo(_rememberedAmmo);
-        _animator.SetInteger("MagIn", _state);
+        if (!HasMag)
+        {
+            HasMag = true;
+            _state = 0;
+            _gunscript.SetAmmo(_rememberedAmmo);
+            _animator.SetInteger("MagIn", _state);
+        }
     }
 }

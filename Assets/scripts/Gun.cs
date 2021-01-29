@@ -122,12 +122,15 @@ public class Gun : MonoBehaviour
 
     public void ejectEmptyShel()
     {
-        GameObject RD = Instantiate(_EmptyShell, _EjectPort.transform);
-        RD.transform.localPosition = Vector3.zero;
-        RD.transform.localRotation = _EmptyShell.transform.rotation;
-        RD.transform.parent = null;
-        Destroy(RD, 20);
-        RD.GetComponent<Rigidbody>().velocity = _EjectPort.TransformDirection(_EjectDeraction * _EjectSpeed);
+        if (_EjectPort != null && _EmptyShell != null)
+        {
+            GameObject RD = Instantiate(_EmptyShell, _EjectPort.transform);
+            RD.transform.localPosition = Vector3.zero;
+            RD.transform.localRotation = _EmptyShell.transform.rotation;
+            RD.transform.parent = null;
+            Destroy(RD, 20);
+            RD.GetComponent<Rigidbody>().velocity = _EjectPort.TransformDirection(_EjectDeraction * _EjectSpeed);
+        }
         _animator.SetInteger("GunState", 2);
     }
 
