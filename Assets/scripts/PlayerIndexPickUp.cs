@@ -48,23 +48,22 @@ public class PlayerIndexPickUp : MonoBehaviour
 
     private void FixedUpdate()
     {
-        _ectivationFloat = (_skeleton.pinkyCurl + _skeleton.ringCurl + _skeleton.middleCurl) / 3;
-        if (_ectivationFloat > 0.5f && _handClosed == false)
+        _ectivationFloat = (_skeleton.pinkyCurl + _skeleton.ringCurl + _skeleton.middleCurl) / 3; // get the pinky-, ring- and middleCurl from the skeleton and divide by three.
+        if (_ectivationFloat > 0.5f && _handClosed == false) // if the combined curl bigger is than 50% try picking up the object.
         {
-            _handClosed = !_handClosed;
-            CheckForObjectAndPickUp();
+            _handClosed = !_handClosed; // flip the bool _handClosed.
+            CheckForObjectAndPickUp(); // try picking up the object.
         }
-        else if(_ectivationFloat < 0.5f && _handClosed == true)
+        else if(_ectivationFloat < 0.5f && _handClosed == true)// if the combined curl smaller is than 50% try lettin go of the object.
         {
-            _handClosed = !_handClosed;
-            if (_ObjectInHand != null)
+            _handClosed = !_handClosed; // flip the bool _handClosed.
+            if (_ObjectInHand != null) // if there is a object in the hand let it go.
                 letGoOfObject();
         }
 
-        if (_GunInHand != null)
+        if (_GunInHand != null) // if there is a gun in the hand.
         {
-            _GunInHand.ShootCalculate(_trigger.GetAxis(_hand.inputSource));
-
+            _GunInHand.ShootCalculate(_trigger.GetAxis(_hand.inputSource)); // send the axis of the trigger to the gun.
         }
     }
 
@@ -85,33 +84,37 @@ public class PlayerIndexPickUp : MonoBehaviour
 
     
 
-
+    /// <summary>
+    /// checks if there is a object in the hand.
+    /// </summary>
     private void CheckForObjectAndPickUp()
     {
-        if (_ObjectInHand != null)
+        if (_ObjectInHand != null) // if object in hand isn't null
         {
-            letGoOfObject();
+            letGoOfObject(); // let go of the current object
             if (_handClosed == true)
-                _handClosed = !_handClosed;
+                _handClosed = !_handClosed; // flip bool _handClosed if necesery. 
         }
 
-        Collider[] colliders = Physics.OverlapBox(_handCollider.transform.position, _handCollider.transform.lossyScale / 2, _handCollider.transform.rotation, _Layer);
-        for (int i = 0; i < colliders.Length; i++)
+        Collider[] colliders = Physics.OverlapBox(_handCollider.transform.position, 
+            _handCollider.transform.lossyScale / 2,
+            _handCollider.transform.rotation, _Layer); // get all the colliders that overlap with this object and are in the right layer.
+
+        for (int i = 0; i < colliders.Length; i++) //loop throug the array of colliders.
         {
-            Rigidbody RB = colliders[i].attachedRigidbody;
-            if (RB != null)
+            Rigidbody RB = colliders[i].attachedRigidbody; // get the rigidbody of the object in the array
+            if (RB != null) // if it has a rigid body continue else look at the next entery in the array.
             {
-                _otherHand.ObjectIsInOntherHand(colliders[i].gameObject);
-                RB.isKinematic = true;
-                _joint.connectedBody = RB;
-                _ObjectInHand = colliders[i].gameObject;
-                _ObjectInHand.transform.parent = gameObject.transform;
-                _ObjectRigidbody = null;
-                // check if object is Gun;
-                _GunInHand = colliders[i].GetComponent<Gun>();
-                if (_GunInHand != null)
+                _otherHand.ObjectIsInOntherHand(colliders[i].gameObject); // check if the object is in the other hand. and tell them to let go.
+                RB.isKinematic = true; // set the gun to kinematic
+                _joint.connectedBody = RB; // connect the rigid body to the joint/
+                _ObjectInHand = colliders[i].gameObject; // set the object in hand
+                _ObjectInHand.transform.parent = gameObject.transform; // set the transform of the object.
+                _ObjectRigidbody = null; // empty the reference to the objectrigidbody. this is used when letting go.
+                _GunInHand = colliders[i].GetComponent<Gun>(); // get the Gun script.
+                if (_GunInHand != null) // if the object is a Gun
                 {
-                    Transform LockPos;
+                    Transform LockPos; // get the lock position.
                     if (_RightHand)
                     {
                         LockPos = _GunInHand.GetRightLockPosition;
@@ -120,13 +123,13 @@ public class PlayerIndexPickUp : MonoBehaviour
                     {
                         LockPos = _GunInHand.GetLeftLockPosition;
                     }
-                    _handRendererObject.SetActive(false);
-                    _ObjectInHand.transform.localPosition = LockPos.localPosition;
-                    _ObjectInHand.transform.localRotation = LockPos.localRotation;
+                    _handRendererObject.SetActive(false); // stop rendering the hand.
+                    _ObjectInHand.transform.localPosition = LockPos.localPosition; // set the right position.
+                    _ObjectInHand.transform.localRotation = LockPos.localRotation; // set the right rotation.
                 }
-
-                _magazineInHand = colliders[i].GetComponent<Magazine>();
-                i = colliders.Length; // end the for loop.
+                _magazineInHand = colliders[i].GetComponent<Magazine>(); // get magazine. is for letting go.
+                break; // end the for loop.
+                //i = colliders.Length; 
             }
         }
     }
